@@ -1,0 +1,562 @@
+<!doctype html>
+<html>
+  <head>
+    <title>My experiment</title 
+    <style>
+    <link rel="stylesheet" type="text/css" href="firstExp.css"> 
+    </style>
+  </head>
+   <!-- SHOULD ADD A FUNCTION THAT SAVES THE PICTURES FOR THE TASK. In the general setup it will be the vector of pictures order-->
+   <body>
+   <!--Abb ADANCANCY MATRIX FUNCTION:-->  
+  <script src="rectGA.js"></script>
+  <!-- Task Script-->
+  <!--<script src="taskScriptExtA.js"></script>-->
+  
+   <!-- define welcome message block -->
+   <div id="cover">
+   <h1> <b id = "wellc">Welcome!</b> </h1>
+   <!--  define instructions block -->
+   <center><div><p class="centerC" id="instructions"> </p>
+   <img id="chPicC1"></div></center>
+
+   
+   <center>
+   <div style="padding-bottom: 4%;"class="pic">
+   <button type="button" id="Lbot"
+   onclick="conExp(1)">
+   animal</button>
+  <button type="button" id="Mbot"
+   onclick="conExp(2)">
+   food</button>
+  <button type="button" id="Rbot"
+   onclick="conExp(3)">
+   other</button>
+   </div></center>
+
+   
+   <center>
+   <div id="endTid" class="endT">
+   <p id="endExp"></p>
+   </div></center>
+   
+   <p id="instructionsB">less than 60% corrct: +0 point </br>more than 60% correct +1 point</br> more than 80% correct +2 point</p> 
+   <div class="qBut"><p id="isQ" style="font-size:15px;font-family:sans-serif;text-align:none;">Would you like to quit?</p></div>
+   <div class="qBut"><button type="button" id = "qBot" 
+   onclick="endAllTrials(1)">
+   yes</button>
+   </div>
+  </div>
+  <center><div id="endCover"><p id="endThanks"></p></div></center>
+  
+  
+   <!-- Task:-->
+   
+  <div id="task">
+  
+  <!--  define instructions block -->
+   <center><p class="centerC" id="instructionsT"> </p></center>
+   <!--<center><p id="targetPic"><img id="tarPt"></p></center>-->
+   <center><div id="tarPid"><p id="targetPic"></p><img id="tarPt"></div></center>
+   
+   <center>
+   <div id="picT">
+   <p></p>
+   <button type="button" id="LbotT" style="margin:10px";
+   onclick="conExpT(1)">
+   <img id="chPic1"></button>
+   <button type="button" id="RbotT"
+   onclick="conExpT(2)">
+   <img id="chPic2"></button>
+   </div></center>
+
+   <center><p id="endExpReachT"></p><center>
+   
+   <center>
+   <div id="endTask">
+   <button type="button" id = "conBot" style="margin:10px";
+   onclick="contT(1)">
+   click here to continoue for next trial</button>
+   <button type="button" id = "endBot" 
+   onclick="endAllTrialsT(1)">
+   click to Finish</button>
+   </div></center>
+      
+   </div>
+   <center><p id="endThanksT"></p></center> 
+<script>
+/* Print instructions*/
+document.getElementById("instructions").innerHTML="<b>What is the type of the picture? </br>pay attention to the pointing method below</br>";
+
+/*array pictures objects - maps*/
+var mapsAr=[];
+var nmap=1;
+var indM1;//the number of map to use in the Task
+/*vriables that are specific to the adjacency matrix:*/
+var n1=4;//The dimension of the grid.
+var np=n1*n1;// the number of pictures
+[Ar]=createArect(n1);//Adjancency matrix
+
+/*trial variable*/
+var nTrial = 1;
+var endR=0;
+var c,cend,corR;
+var inP1,inP;
+var endTresult=document.getElementById("endTid");
+var inst=document.getElementById("instructions");
+var instB=document.getElementById("instructionsB");
+var wellel=document.getElementById("wellc");
+var imC = document.getElementById("chPicC1");
+
+/*disable the end bottuns*/
+var qb=document.getElementById("qBot");
+
+/* pictures button objects*/
+var RB=document.getElementById("Rbot");
+var LB=document.getElementById("Lbot");
+var MB=document.getElementById("Mbot");
+coverTask();
+
+function coverTask(){
+  
+  /*initilzation of the random generator:*/
+  var d = new Date();
+  var mn = d.getMinutes();
+  var nr;
+  mn = Math.floor(mn/2);
+  for (nr==0;nr++;nr<mn){
+       Math.random();
+  }
+
+  /*create a 1D array of pictures (start with regular grid):*/
+  var myPic=[];
+  var typePic=[];
+  var a=1,ntype=3;
+  var ran1,cn,corR=0;
+  c=1;
+  cend = 10*np;
+  var j1,j2,np0;
+  nall = 15;//30;
+
+  if(cend>100){
+    cend=2*np;
+    if (cend>100){
+      cend = 100;
+    }  
+  }
+  /* Create The Picture Array:*/
+  for (j1=0; j1<np;j1++){
+     npt = 1+Math.floor(Math.random() * (ntype));
+     np0 = 1+Math.floor(Math.random() * (nall-1));
+	 myPic.push(np0);
+     typePic.push(npt);   
+  }
+  var map={type:"rectA",picArr:[], picType:[]};
+  map.picArr=myPic;
+  map.picType=typePic;
+  mapsAr.push(map);
+
+  in1P = Math.floor(Math.random() * (np-1));
+  FileName = "set2/jpgPic/"; 
+  var tP = typePic[in1P];
+  switch(tP){
+    case 1:
+     imC.src = FileName+"animals/pic"+ myPic[in1P].toString() + ".JPG";
+     break;
+    case 2:
+     imC.src = FileName+"food/pic"+ myPic[in1P].toString() + ".JPG";
+     break;
+    case 3:
+     imC.src = FileName+"others/pic"+ myPic[in1P].toString() + ".JPG";
+     break;
+  }
+    defBorderA(imC,in1P,n1,np);
+}
+
+function conExp(cpic){
+   var tlap=1500;
+   var typePic=mapsAr[nTrial-1].picType;
+   var myPic=mapsAr[nTrial-1].picArr;
+   RB.disabled=true;
+   LB.disabled=true;
+   MB.disabled=true;
+   setTimeout(myTimeout, tlap); 
+   if(cpic==typePic[in1P]){
+      corR = corR+1;
+   }
+   ran1 = Math.random();
+   in1P=detNextPicGenA(ran1,Ar,in1P);
+   c = c+1;
+   
+   FileName = "set2/jpgPic/";
+   tP = typePic[in1P];
+   switch(tP){
+    case 1:
+     imC.src = FileName+"animals/pic"+ myPic[in1P].toString() + ".JPG";
+     break;
+    case 2:
+     imC.src = FileName+"food/pic"+ myPic[in1P].toString() + ".JPG";
+     break;
+    case 3:
+     imC.src = FileName+"others/pic"+ myPic[in1P].toString() + ".JPG";
+     break;
+   }
+  defBorderA(imC,in1P,n1,np);
+  /*if (c>cend){
+   //quitExp(1);
+   } 
+   else{*/
+   RB.disabled=false;
+   LB.disabled=false;
+   MB.disabled=false;  
+   //}   
+}
+
+function quitExp(endR){
+   RB.disabled=true;
+   LB.disabled=true;
+   MB.disabled=true;
+   var pCor = Math.floor(100*corR/c);
+   corR=0;
+   document.getElementById("endExp").innerHTML = "exp end, correct andwers: <br> "+pCor+"%</br>would you like to continoue?";
+   creatBot("yes","cont(1)","endTid","yesCoB");
+   creatBot("no","endAllTrials(1)","endTid","noCoB");
+}
+
+function cont(docon){
+  var yesCb = document.getElementById("yesCoB");
+  var noCb = document.getElementById("noCoB");
+  yesCb.remove();
+  noCb.remove();
+  if(docon==1){
+  document.getElementById("endExp").innerHTML="";
+  c = 1;
+  corR = 0;
+  in1P = Math.floor(Math.random() * (np-1)); 
+
+ /*create a new array of pictures (start with regular grid):*/
+  var myPic=[];
+  var typePic=[];
+  for (j1=0; j1<np;j1++){
+     npt = 1+Math.floor(Math.random() * (ntype));
+     np0 = 1+Math.floor(Math.random() * (nall-1));
+	 myPic.push(np0);
+     typePic.push(npt);   
+  }
+  var map={type:"rectA",picArr:[], picType:[]};
+  map.picArr=myPic;
+  map.picType=typePic;
+  mapsAr.push(map);
+  nmap = nmap+1;
+  
+  switch(typePic[in1P]){
+   case 1:
+     imC.src = FileName+"animals/pic"+ myPic[in1P].toString() + ".JPG";
+   case 2:
+     imC.src = FileName+"animals/pic"+ myPic[in1P].toString() + ".JPG";
+   case 3:
+     imC.src = FileName+"animals/pic"+ myPic[in1P].toString() + ".JPG";
+  }
+  defBorderA(imC,in1P,n1,np);
+  RB.disabled=false;
+  LB.disabled=false;
+  MB.disabled=false;
+  nTrial = nTrial+1;
+ }
+}
+
+/* end cover task part*/
+function endAllTrials(endB){
+  var yesCb = document.getElementById("yesCoB");
+  var noCb = document.getElementById("noCoB");
+  if(yesCb!=null){
+    yesCb.remove();
+    noCb.remove();
+  }
+  var allCov=document.getElementsByClassName("cover");
+  cover.remove();
+  document.getElementById("endThanks").innerHTML = "Thank you, would you like to continoue to the next step?";
+  creatBot("yes","startTask(0)","endCover","yesTask");
+}
+
+/*task functions*/
+
+/* pictures button objects*/
+var PICclass=document.getElementById("picT");
+var trp=document.getElementById("tarPid");
+var RBt=document.getElementById("RbotT");
+var LBt=document.getElementById("LbotT");
+var imel = document.getElementById("chPic2");
+var imel1 = document.getElementById("chPic1");
+var imelt = document.getElementById("tarPt");
+var Et=document.getElementById("endTask");
+var inst=document.getElementById("instructionsT");
+var tarPel=document.getElementById("targetPic");
+var allTask=document.getElementById("task");
+/*disable the end bottuns*/
+var bc=document.getElementById("conBot");
+bc.disabled=true;
+var be=document.getElementById("endBot");
+be.disabled=true;
+/*trial variable*/
+var totalStep = 0;
+var nTrial = 1;
+var in1R,in1L,inP,tar1;
+trp.style.display="inline";
+
+function startTask(f){
+   c=1;
+   if (f==0){
+  /* clear the page:*/
+  var clearCOVER=document.getElementById("endCover");
+  clearCOVER.remove();
+  }else{
+  document.getElementById("endExpReachT").innerHTML ="";
+  }
+  
+  
+  /*print instructions:"*/
+  document.getElementById("instructionsT").innerHTML="<b>Choose (by clicking) an image to get to the target as fast as you can.</br>";
+  document.getElementById("targetPic").innerHTML="your target is:<br> ";
+  
+   /*initilzation of the random generator:*/
+  var d = new Date();
+  var mn = d.getMinutes();
+  var nr;
+  mn = Math.floor(mn/2);
+  for (nr==0;nr<mn;nr++){
+      Math.random();
+  }
+
+  /*stimulus blocks*/
+  
+  tar1 = Math.floor(Math.random() * (np-1));
+  var ran1,tlap;
+  var c = 1,cend = 4*np;
+  var j1,j2;
+  inP = Math.floor(Math.random() * np);
+  if (inP==np){
+     inP = inP-1;
+  }
+  /*define the target:*/
+
+  FileName = FileName = "set2/jpgPic/"; 
+  var indM=mapsAr.length;
+  indM1=Math.floor(Math.random() * indM);
+  myPic = mapsAr[indM1].picArr;
+  typePic = mapsAr[indM1].picType;
+
+  var tP = typePic[tar1];
+  switch(tP){
+   case 1:
+     imelt.src = FileName+"animals/pic"+ myPic[tar1].toString() + ".JPG";
+     break;
+   case 2:
+     imelt.src = FileName+"food/pic"+ myPic[tar1].toString() + ".JPG";
+     break;
+   case 3:
+     imelt.src = FileName+"others/pic"+ myPic[tar1].toString() + ".JPG";
+     break;
+  }
+
+  imelt.style.display="inline";
+  imelt.style.border="3px solid";
+  defBorderA(imelt,tar1,n1,np);
+    
+  /*define starting location:*/
+  
+  do{
+  ran1 = Math.random();
+  in1L=detNextPicGenA(ran1,Ar,inP);
+  }
+  while(in1L==tar1)
+  do{
+  ran1 = Math.random();
+  in1R=detNextPicGenA(ran1,Ar,inP);
+  }
+  while((in1L==in1R)||(in1R==tar1))
+
+
+  var tP = typePic[in1L];
+  switch(tP){
+   case 1:
+     imel1.src = FileName+"animals/pic"+ myPic[in1L].toString() + ".JPG";
+     break;
+   case 2:
+     imel1.src = FileName+"food/pic"+ myPic[in1L].toString() + ".JPG";
+     break;
+   case 3:
+     imel1.src = FileName+"others/pic"+ myPic[in1L].toString() + ".JPG";
+     break;
+  }
+  imel1.style.display="inline";
+  imel1.border="5px solid";
+  defBorderA(imel1,in1L,n1,np);
+  
+  var tP = typePic[in1R];
+  switch(tP){
+   case 1:
+     imel.src = FileName+"animals/pic"+ myPic[in1R].toString() + ".JPG";
+     break;
+   case 2:
+     imel.src = FileName+"food/pic"+ myPic[in1R].toString() + ".JPG";
+     break;
+   case 3:
+     imel.src = FileName+"others/pic"+ myPic[in1R].toString() + ".JPG";
+     break;
+  }
+  imel.style.display="inline";
+  imel.style.border="5px solid";
+  defBorderA(imel,in1R,n1,np);
+  
+  PICclass.style.display="inline";
+  Et.style.display="inline";
+}
+
+
+function conExpT(cpic){
+  var typePic=mapsAr[indM1].picType;
+  var myPic=mapsAr[indM1].picArr;
+  ran1 = Math.random();
+  if (cpic==1){//LEFT HAS BEEN CHOSEN
+        in1R = inP;
+        inP = in1L;
+  	    in1L=detNextPicExA(inP,ran1,in1R);
+  }else{
+        in1L = inP;
+        inP = in1R;
+        in1R=detNextPicExA(inP,ran1,in1L);
+  }
+
+  c = c+1;
+  /*checking for too long trial*/
+  if (c>cend){
+    document.getElementById("endExpReachT").innerHTML = "exp end, to many steps! number of step="+c.toString();
+    RBt.disabled=true;
+    LBt.disabled=true;
+    bc.disabled=false;
+    be.disabled=false;
+    totalStep = totalStep +c;
+  } 
+  tlap = Math.floor((Math.random() * 1000) + 750);
+  setTimeout(myTimeout, tlap); 
+  
+  /*presenting the images:*/
+
+  var tP = typePic[in1R];
+  switch(tP){
+   case 1:
+     imel.src = FileName+"animals/pic"+ myPic[in1R].toString() + ".JPG";
+     break;
+   case 2:
+     imel.src = FileName+"food/pic"+ myPic[in1R].toString() + ".JPG";
+     break;
+   case 3:
+     imel.src = FileName+"others/pic"+ myPic[in1R].toString() + ".JPG";
+     break;
+  }
+    var tP = typePic[in1L];
+  switch(tP){
+   case 1:
+     imel1.src = FileName+"animals/pic"+ myPic[in1L].toString() + ".JPG";
+     break;
+   case 2:
+     imel1.src = FileName+"food/pic"+ myPic[in1L].toString() + ".JPG";
+     break;
+   case 3:
+     imel1.src = FileName+"others/pic"+ myPic[in1L].toString() + ".JPG";
+     break;
+  }
+  defBorderA(imel,in1R,n1,np);
+  defBorderA(imel1,in1L,n1,np);
+  
+  /*checking reacing to target*/
+  if ((inP==tar1)){
+    document.getElementById("endExpReachT").innerHTML = "exp end,target has been reached number of step="+c.toString();
+    RBt.disabled=true;
+    LBt.disabled=true;
+    bc.disabled=false;
+    be.disabled=false;
+    totalStep = totalStep +c;
+    return;
+  } 
+}
+
+function contT(docon){
+  if(docon==1){
+  c = 1;
+  RBt.disabled=false;
+  LBt.disabled=false;
+  be.disabled=true;
+  bc.disabled=true;
+  nTrial = nTrial+1;
+  startTask(1);
+ }
+}
+
+function endAllTrialsT(endB){
+ if(endB==1){
+  var avlose = totalStep/nTrial;
+  allTask.remove(); 
+  document.getElementById("endThanksT").innerHTML = "Thank you, your average lose is:" + avlose;
+ }
+}
+
+/*next picture, regular rectagular array*/
+
+function detNextPicGenA(ran1,Ar,in1){
+   var nbI = Ar[in1].length-1;//number of neighbourse of that node, if it is array in the second dim it starts with 1 if it is 1d so 0
+   var nin = 1+Math.floor(nbI*ran1);
+   if(nin==5){//for the very rare case that ran1==1, 2D array: the second dimention starts from 1...
+    nin=4;
+   }
+   var nxp=Ar[in1][nin];
+   return nxp;
+}
+
+function detNextPicExA(in0,ran1,in1){
+  var nbI = Ar[in0];//the neighbourse of that node
+  var nb=[];
+  var j;
+  var leb=nbI.length;
+  for (j=1;j<leb;j++){
+   if(nbI[j]!=in1){
+   nb.push(nbI[j]);
+   }
+  }
+  var nbl = nb.length-1;
+  var nf=Math.floor(nbl*ran1);
+  if (ran1==1){
+  nf = nf-1;
+  }
+  var nin = nf;
+  var nxp=nb[nin];
+  return nxp;
+}
+
+/* other functions*/
+function clearArr(Arr){
+var len = Arr.length;
+var jn;
+for (jn=0;jn<len;jn++){
+     Arr.pop();
+}
+return Arr;
+}
+
+/* create button*/
+function creatBot(textB,onclikF,myDIV,botID) {
+    var btn = document.createElement("BUTTON");
+    var t = document.createTextNode(textB);
+    btn.appendChild(t);
+	btn.setAttribute("onclick", onclikF);
+	btn.setAttribute("id", botID);
+	document.getElementById(myDIV).appendChild(btn); 
+}
+function myTimeout(){
+}
+
+    
+</script>
+</body>
+</html>
